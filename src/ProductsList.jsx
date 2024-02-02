@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 const ProductsList = () => {
   const [products, setProducts] = useState([]);
 
+  const [pending, setPending] = useState(false);
+
   const [updatedProduct, setUpdatedProduct] = useState({});
 
   const [key, setKey] = useState(null);
@@ -12,14 +14,18 @@ const ProductsList = () => {
 
  
  const getProducts = async ()=>{
+  setPending(true);
   const {data} = await axios.get('https://simple-backend-ashy.vercel.app/products');
   setProducts(data);
+  setPending(false);
   console.log(data);
  }  
     useEffect(()=>{
      getProducts();
     }, [])
   return (
+    <>
+    {pending?  <h1 className=' font-bold text-center mt-5'>Loading data please wait</h1> : 
     <div className=' flex justify-start items-start flex-wrap'>
       {products?.map((product)=>(
         <div key={product._id} className=' mx-5 my-6'>
@@ -27,10 +33,10 @@ const ProductsList = () => {
 
         {(isEditing && (key === product._id))? 
         <div className=' flex flex-col items-center'>
-        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' type="text" value={updatedProduct?.brand} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, brand: e.target.value}))}/>
-        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' type="text" value={updatedProduct?.title} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, title: e.target.value}))}/>
-        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' type="number" value={updatedProduct?.price} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, price: e.target.value}))}/>
-        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' type="number" value={updatedProduct?.discountPercentage} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, discountPercentage: e.target.value}))}/>
+        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' placeholder='brand' type="text" value={updatedProduct?.brand} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, brand: e.target.value}))}/>
+        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' placeholder='title' type="text" value={updatedProduct?.title} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, title: e.target.value}))}/>
+        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' placeholder='price' type="number" value={updatedProduct?.price} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, price: e.target.value}))}/>
+        <input className=' border border-gray-200 my-2 w-[95%] bg-gray-100 font-semibold' placeholder='discount' type="number" value={updatedProduct?.discountPercentage} onChange={(e)=>setUpdatedProduct((preVal)=>({...preVal, discountPercentage: e.target.value}))}/>
 
         <div className=' flex justify-center my-4'>
           <button onClick={()=>{
@@ -78,6 +84,8 @@ const ProductsList = () => {
         </div>
       ))}
     </div>
+}
+    </>
   )
 }
 
